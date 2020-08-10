@@ -1,9 +1,11 @@
 # pylint: disable=missing-module-docstring
+import warnings
 import numpy as np
 import pandas as pd
-from scipy.optimize import minimize
 from sklearn.neighbors import KernelDensity
-
+from scipy.optimize import minimize
+from scipy.cluster.hierarchy import average, complete, single, dendrogram
+from matplotlib import pyplot as plt
 
 class Filtermatrix:
 
@@ -134,6 +136,89 @@ class Filtermatrix:
         sse = np.sum((empirical_pdf - theoretical_pdf) ** 2)
 
         return sse
+
+    @staticmethod
+    def filter_corr_hierarchical(cor_matrix, method='complete', draw_plot=False):
+        """
+        Creates a filtered correlation matrix using hierarchical clustering methods from an empirical
+        correlation matrix, given that all values are non-negative [0 ~ 1]
+
+        This function allows for three types of hierarchical clustering - complete, single, and average
+        linkage clusters. Link to hierarchical clustering methods documentation:
+        `<https://docs.scipy.org/doc/scipy/reference/generated/scipy.cluster.hierarchy.linkage.html>`_
+
+        It works as follows:
+
+        First, the method creates a hierarchical clustering tree using scipy's hierarchical clustering methods
+        from the empirical 2-D correlation matrix.
+
+        Second, it extracts and stores each cluster's filtered value (alpha) and assigns it to it's corresponding leaf.
+
+        Finally, we create a new filtered matrix by assigning each of the correlations to their corresponding
+        parent node's alpha value.
+
+        :param cor_matrix: (np.array) Numpy array of an empirical correlation matrix.
+        :param method: (str) Hierarchical clustering method to use. (``complete`` by default, ``single``, ``average``)
+        :param draw_plot: (bool) Plots the hierarchical cluster tree. (False by default)
+        :return: (np.array) The filtered correlation matrix.
+        """
+
+        # Check if all matrix elements are positive
+        if np.any(cor_matrix < 0):
+            warnings.warn('Not all elements in matrix are positive... Returning unfiltered matrix.', UserWarning)
+            return cor_matrix
+
+        # Check if matrix is 2-D
+        if len(cor_matrix.shape) == 2:
+            cor_x, cor_y = cor_matrix.shape
+        else:
+            warnings.warn('Invalid matrix dimensions, input must be 2-D array... Returning unfiltered matrix.',
+                          UserWarning)
+            return cor_matrix
+
+        # Check if matrix dimensions and diagonal values are valid.
+        if cor_x == cor_y and np.allclose(np.diag(cor_matrix), 1):  # using np.allclose as diag values might be 0.99999
+            # Creating new coorelation condensed matrix for the upper triangle and dismissing the diagnol.
+            new_cor = cor_matrix[np.triu_indices(cor_matrix.shape[0], k=1)]
+        else:
+            warnings.warn(
+                'Invalid matrix, input must be a correlation matrix of size (m x m)... Returning unfiltered matrix.',
+                UserWarning)
+            return cor_matrix
+
+        # Compute the hierarchical clustering tree
+        if method == 'complete':
+            z_cluster = complete(new_cor)
+        elif method == 'single':
+            z_cluster = single(new_cor)
+        elif method == 'average':
+            z_cluster = average(new_cor)
+        else:
+            warnings.warn('Invalid method selected, please check docstring... Returning unfiltered matrix.',
+                          UserWarning)
+            return cor_matrix
+
+        # Plot the hierarchical cluster tree
+        if draw_plot:
+            fig = plt.figure(figsize=(10, 6))
+            axis = fig.add_subplot(111)
+            dendrogram(z_cluster, ax=axis)
+            plt.show()
+
+        # Creates a pd.DataFrame that will act as a dictionary where the index is the leaf node id, and the values are
+        # thier corresponding cluster's alpha value
+        alpha_values = z_cluster[:, 2]
+        alphas = z_cluster[:, 0]
+        df_alphas = pd.DataFrame(alpha_values, index=alphas)
+        df_alphas.loc[z_cluster[0][1]] = alpha_values[0]
+
+        # Creates the filtered correlation matrix
+        alphas_sorterd = df_alphas.sort_index()
+        alphas_x = np.tile(alphas_sorterd.values, (1, len(alphas_sorterd.values)))
+        filt_corr = np.maximum(alphas_x, alphas_x.T)
+        np.fill_diagonal(filt_corr, 1)
+
+        return filt_corr
 
     @staticmethod
     def _fit_kde(observations, kde_bwidth=0.01, kde_kernel='gaussian', eval_points=None):

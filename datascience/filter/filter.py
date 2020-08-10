@@ -8,17 +8,35 @@ from scipy.cluster.hierarchy import average, complete, single, dendrogram
 from matplotlib import pyplot as plt
 
 class Filtermatrix:
+    """
+    This class contains the implementations for different ways to calculate and adjust Covariance matrices.
+    The functions related to de-noising and de-toning the Covariance matrix are reproduced with modification
+    from Chapter 2 of the the following book:
+    Marcos Lopez de Prado “Machine Learning for Asset Managers”, (2020).
+    """
 
     def denoise_covariance(self, cov, tn_relation, kde_bwidth=0.01):
         """
         De-noises the covariance matrix or the correlation matrix using Spectral clustering.
 
-        The Spectral Method works just like the Constant Residual Eigenvalue Method, but instead of replacing
-        eigenvalues lower than the maximum theoretical eigenvalue to their average value, they are replaced with
-        zero instead.
+        The Spectral Clustering Method works as follows:
 
-        Correlation matrix can also be detoned by excluding a number of first eigenvectors representing
-        the market component.
+        First, a correlation is calculated from the covariance matrix (if the input is the covariance matrix).
+
+        Second, eigenvalues and eigenvectors of the correlation matrix are calculated using the linalg.eigh
+        function from numpy package.
+
+        Third, a maximum theoretical eigenvalue is found by fitting Marcenko-Pastur (M-P) distribution
+        to the empirical distribution of the correlation matrix eigenvalues. The empirical distribution
+        is obtained through kernel density estimation using the KernelDensity class from sklearn.
+        The fit of the M-P distribution is done by minimizing the Sum of Squared estimate of Errors
+        between the theoretical pdf and the kernel. The minimization is done by adjusting the variation
+        of the M-P distribution.
+
+        Fourth, the eigenvalues of the correlation matrix are sorted and the eigenvalues lower than
+        the maximum theoretical eigenvalue are set to zero. This is how the eigenvalues
+        associated with noise are shrinked. The de-noised covariance matrix is then calculated back
+        from new eigenvalues and eigenvectors.
 
         These algorithms are reproduced with minor modifications from the following book:
         Marcos Lopez de Prado “Machine Learning for Asset Managers”, (2020).

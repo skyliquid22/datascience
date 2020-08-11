@@ -4,8 +4,5 @@ __pycache__
 *.pickle
 */.ipynb_checkpoints/*
 .idea/*
-datascience.egg-info/dependency_links.txt
-datascience.egg-info/PKG-INFO
-datascience.egg-info/requires.txt
-datascience.egg-info/SOURCES.txt
-datascience.egg-info/top_level.txt
+datascience.egg-info/*
+docs/build/

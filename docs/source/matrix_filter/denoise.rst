@@ -60,50 +60,68 @@ the method in which this is achieved is by setting the eigenvalues which are bel
 average value, they are set to zero in an attempt to remove the effects of those eigenvalues that are consistent
 with the null hypothesis of uncorrelated random variables.
 
-Let us consider $n$ independent random variables with finite variance and $T$ records each. Random matrix
-theory allows to prove that in the $\lim\limits_{n \to \infty} T$, with a fixed ratio $Q = T/n \geq 1$, the
-eigenvalues of the sample correlation matrix cannot be larger than
+The de-noising function works as follows:
 
-$$ \lambda_{max} = \sigma^2(1 + \frac{1}{Q} + 2\sqrt{\frac{1}{Q}})$$
+- The given covariance matrix is transformed to the correlation matrix.
 
-where $\sigma^2 = 1$ for correlation matrices, once achieved we set any eignevalues above this threshold to $0$.
-For example, we have a set of 5 eigenvalues sorted in the descending order ( $\lambda_1$ ... $\lambda_5$ ),
-3 of which are below the maximum theoretical value, then we set
+- The eigenvalues and eigenvectors of the correlation matrix are calculated.
 
-$$ \lambda_3^{NEW} = \lambda_4^{NEW} = \lambda_5^{NEW} = 0$$
+- Using the Kernel Density Estimate algorithm a kernel of the eigenvalues is estimated.
+
+- The Marcenko-Pastur pdf is fitted to the KDE estimate using the variance as the parameter for the optimization.
+
+- From the obtained Marcenko-Pastur distribution, the maximum theoretical eigenvalue is calculated using the formula
+  from the **Instability caused by noise** part of `A Robust Estimator of the Efficient Frontier paper <https://papers.ssrn.com/sol3/abstract_id=3469961>`__.
+
+- The eigenvalues in the set that are below the theoretical value are all set to their average value.
+  For example, we have a set of 5 eigenvalues sorted in the descending order ( :math:`\lambda_1` ... :math:`\lambda_5` ),
+  3 of which are below the maximum theoretical value, then we set
+
+.. math::
+
+    \lambda_3^{NEW} = \lambda_4^{NEW} = \lambda_5^{NEW} = 0
 
 - Eigenvalues above the maximum theoretical value are left intact.
 
-$$\lambda_1^{NEW} = \lambda_1^{OLD}$$
+.. math::
 
-$$\lambda_2^{NEW} = \lambda_2^{OLD}$$
+    \lambda_1^{NEW} = \lambda_1^{OLD}
+
+    \lambda_2^{NEW} = \lambda_2^{OLD}
 
 - The new set of eigenvalues with the set of eigenvectors is used to obtain the new de-noised correlation matrix.
-$\tilde{C}$ is the de-noised correlation matrix, $W$ is the eigenvectors matrix, and $\Lambda$ is the diagonal matrix with new eigenvalues.
+  :math:`\tilde{C}` is the de-noised correlation matrix, :math:`W` is the eigenvectors matrix,
+  and :math:`\Lambda` is the diagonal matrix with new eigenvalues.
 
-$$\tilde{C} = W \Lambda W$$
+.. math::
 
-- To rescale $\tilde{C}$ so that the main diagonal consists of 1s the following transformation is made. This is how the
-final $C_{denoised}$ is obtained.
+    \tilde{C} = W \Lambda W'
 
-$$C_{denoised} = \tilde{C} [(diag[\tilde{C}])^\frac{1}{2}(diag[\tilde{C}])^{\frac{1}{2}'}]^{-1}$$
+- To rescale :math:`\tilde{C}` so that the main diagonal consists of 1s the following transformation is made.
+  This is how the final :math:`C_{denoised}` is obtained.
+
+.. math::
+
+    C_{denoised} = \tilde{C} [(diag[\tilde{C}])^\frac{1}{2}(diag[\tilde{C}])^{\frac{1}{2}'}]^{-1}
 
 - The new correlation matrix is then transformed back to the new de-noised covariance matrix.
 
 .. tip::
 
     Spectral Filtering techniques are based on the comparison between the spectrum of the sample correlation matrix and
-    the spectrum expected for a random matrix. for more information about Random matrix theory check out `The process of
-    de-noising the covariance matrix is described in a paper by _Potter M._, _J.P. Bouchaud_, _L. Laloux_ __“Financial
-    applications of random matrix theory: Old laces and new pieces.”__  [available here](https://arxiv.org/abs/physics/0507111).
+    the spectrum expected for a random matrix. for more information about Random matrix theory check out The process of
+    de-noising the covariance matrix is described in a paper by *Potter M.*, *J.P. Bouchaud*, *L. Laloux* **“Financial
+    applications of random matrix theory: Old laces and new pieces.”** `available here <https://arxiv.org/abs/physics/0507111>`__.
 
 
 Implementation
 **************
 
+.. py:currentmodule:: datascience.filter.filter
+
 .. autoclass:: FilterMatrix
    :noindex:
-   :members: denoise_covariance
+   :members: denoise_covariance_spectral
 
 
 ----
@@ -139,8 +157,9 @@ of :math:`n-1` iterations; until only a single cluster remains.
 .. tip::
     Divisive Hierarchical clustering works in the opposite way. It starts with one single cluster wrapping all
     data points and divides the cluster at each step of its iteration until it ends with n clusters. For more information
-    on Hierarchical Procedures for correlation matrix filtering, Check Michele Tumminello et al research paper
-    `here <https://arxiv.org/pdf/0809.4615.pdf>`__.
+    on Hierarchical Procedures check The process of de-noising the covariance/correlation matrix using Hierarchichal
+    Clustering is described in a paper by *Michele Tumminello*, *Fabrizio Lillo*, and *Rosario N. Mantegna*
+    **“Correlation, hierarchies, and networks in financial markets”** `available here <https://arxiv.org/pdf/0809.4615.pdf>`__.
 
 
 Implementation
@@ -185,7 +204,7 @@ Example Code
     corr_matrix = stock_returns.corr()
 
     # Finding the Spectral Clustering De-noised Сovariance matrix
-    const_resid_denoised = filt.denoise_covariance(cov_matrix, tn_relation)
+    spectral_denoised = filt.denoise_covariance_spectral(cov_matrix, tn_relation)
 
     # Finding the Hierarchical Clustering Filtered Correlation matrix
     hierarchical_filtered = filt.filter_corr_hierarchical(corr_matrix, method='complete',
@@ -196,6 +215,6 @@ Research Notebooks
 
 The following research notebook can be used to better understand how the algorithms within this module can be used on real data.
 
-* `Risk Estimators Notebook`_
+* `Filter Matrix Notebook`_
 
-.. _Risk Estimators Notebook: https://github.com/skyliquid22/datascience/blob/master/notebooks/MatrixFilter.ipynb
+.. _Filter Matrix Notebook: https://github.com/skyliquid22/datascience/blob/master/notebooks/MatrixFilter.ipynb

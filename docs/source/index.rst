@@ -2,8 +2,6 @@
 Data Science Lib
 ================
 
-    |Python| |pylint Score|
-
 Data Science Lib is a python package containing a sample of my past work in Quantative Financial Analysis.
 
 Installation

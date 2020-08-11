@@ -7,7 +7,7 @@ from scipy.optimize import minimize
 from scipy.cluster.hierarchy import average, complete, single, dendrogram
 from matplotlib import pyplot as plt
 
-class Filtermatrix:
+class FilterMatrix:
     """
     This class contains the implementations for different ways to calculate and adjust Covariance matrices.
     The functions related to de-noising and de-toning the Covariance matrix are reproduced with modification
@@ -15,7 +15,7 @@ class Filtermatrix:
     Marcos Lopez de Prado “Machine Learning for Asset Managers”, (2020).
     """
 
-    def denoise_covariance(self, cov, tn_relation, kde_bwidth=0.01):
+    def denoise_covariance_spectral(self, cov, tn_relation, kde_bwidth=0.01):
         """
         De-noises the covariance matrix or the correlation matrix using Spectral clustering.
 

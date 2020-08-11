@@ -8,7 +8,7 @@ import unittest
 import os
 import numpy as np
 import pandas as pd
-from datascience.filter.filter import Filtermatrix
+from datascience.filter.filter import FilterMatrix
 
 
 class TestRiskEstimators(unittest.TestCase):
@@ -35,7 +35,7 @@ class TestRiskEstimators(unittest.TestCase):
         Test the deriving of pdf of the Marcenko-Pastur distribution.
         """
 
-        filt = Filtermatrix()
+        filt = FilterMatrix()
 
         # Properties for the distribution
         var = 0.1
@@ -57,7 +57,7 @@ class TestRiskEstimators(unittest.TestCase):
         Test the kernel fitting to a series of observations.
         """
 
-        filt = Filtermatrix()
+        filt = FilterMatrix()
 
         # Values to fit kernel to and evaluation points
         observations = np.array([0.1, 0.2, 0.2, 0.3, 0.3, 0.3, 0.4, 0.4, 0.5])
@@ -82,7 +82,7 @@ class TestRiskEstimators(unittest.TestCase):
         Test the fit between empirical pdf and the theoretical pdf.
         """
 
-        filt = Filtermatrix()
+        filt = FilterMatrix()
 
         # Values to calculate theoretical and empirical pdfs
         var = 0.6
@@ -101,7 +101,7 @@ class TestRiskEstimators(unittest.TestCase):
         Test the search for maximum random eigenvalue.
         """
 
-        filt = Filtermatrix()
+        filt = FilterMatrix()
 
         # Values to calculate theoretical and empirical pdfs
         eigen_observations = np.array([0.1, 0.2, 0.2, 0.3, 0.3, 0.3, 0.4, 0.4, 0.5])
@@ -121,7 +121,7 @@ class TestRiskEstimators(unittest.TestCase):
         Test the recovering of the covariance matrix from the correlation matrix.
         """
 
-        filt = Filtermatrix()
+        filt = FilterMatrix()
 
         # Correlation matrix and the vector of standard deviations
         corr_matrix = np.array([[1, 0.1, -0.1],
@@ -146,7 +146,7 @@ class TestRiskEstimators(unittest.TestCase):
         Test the deriving of the correlation matrix from a covariance matrix.
         """
 
-        filt = Filtermatrix()
+        filt = FilterMatrix()
 
         # Covariance matrix
         cov_matrix = np.array([[0.01, 0.002, -0.001],
@@ -170,7 +170,7 @@ class TestRiskEstimators(unittest.TestCase):
         Test the calculation of eigenvalues and eigenvectors from a Hermitian matrix.
         """
 
-        filt = Filtermatrix()
+        filt = FilterMatrix()
 
         # Correlation matrix as an input
         corr_matrix = np.array([[1, 0.1, -0.1],
@@ -196,7 +196,7 @@ class TestRiskEstimators(unittest.TestCase):
         Test the shrinkage the eigenvalues associated with noise.
         """
 
-        filt = Filtermatrix()
+        filt = FilterMatrix()
 
         # Eigenvalues and eigenvectors to use
         eigenvalues = np.array([[1.3562, 0, 0],
@@ -222,7 +222,7 @@ class TestRiskEstimators(unittest.TestCase):
         Test the filtering of the emperical correlation matrix.
         """
 
-        filt = Filtermatrix()
+        filt = FilterMatrix()
 
         # Correlation matrix to test
         corr = np.array([[1, 0.70573243, 0.03085437, 0.6019651, 0.81214341],

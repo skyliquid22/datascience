@@ -13,7 +13,7 @@ To view the documentation of this project, you need to compile it from source. T
 
 > **sphinx_build -b html `[Project_Dir]`/docs/source `[Project_Dir]`/docs/build**
 
-The documentation will be in `docs/build` as an HTML.
+The documentation will be available at `docs/build` in HTML format.
 
 ## License
 

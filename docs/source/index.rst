@@ -20,8 +20,15 @@ This project is licensed under an MIT licence.
 `LICENSE.txt <https://github.com/skyliquid22/datascience/blob/master/LICENSE.txt>`_ file for details.
 
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 1
     :caption: Matrix Filter
     :hidden:
 
     matrix_filter/denoise
+
+.. toctree::
+    :maxdepth: 1
+    :caption: Codependence
+    :hidden:
+
+    codependence/correlation_based_metrics

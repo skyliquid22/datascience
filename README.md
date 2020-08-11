@@ -1,5 +1,5 @@
 # Data Science Lib
-This repository includes a sample of my work in Quantitative Financial Analysis. 
+This repository includes a sample of my recent work in Quantitative Financial Analysis. 
 
 # Installation
 First clone the repository in your desired path.

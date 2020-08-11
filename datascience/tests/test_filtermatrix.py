@@ -1,6 +1,6 @@
 # pylint: disable=protected-access
 """
-Tests the functions from the RiskEstimators class.
+Tests the functions from the FilterMatrix class.
 """
 
 import warnings
@@ -11,9 +11,9 @@ import pandas as pd
 from datascience.filter.filter import FilterMatrix
 
 
-class TestRiskEstimators(unittest.TestCase):
+class TestFilterMatrix(unittest.TestCase):
     """
-    Tests different functions of the RiskEstimators class.
+    Tests different functions of the Filter Matrix class.
     """
 
     def setUp(self):

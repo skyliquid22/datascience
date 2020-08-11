@@ -1,5 +1,3 @@
-.. _portfolio_optimisation-risk_estimators:
-
 .. |br| raw:: html
 
     <br>

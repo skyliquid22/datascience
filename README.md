@@ -9,11 +9,11 @@ You can then install the package locally with pip
 > **pip install -e datascience**
 
 # Documentation
-To view the documentation of this project, you need to compile it from source
+To view the documentation of this project, you need to compile it from source. To compile the documentation to HTML format, run the following command:
 
 > **sphinx_build -b html `[Project_Dir]`/docs/source `[Project_Dir]`/docs/build**
 
-The documentation will be in docs/build as an HTML file.
+The documentation will be in `docs/build` as an HTML.
 
 ## License
 

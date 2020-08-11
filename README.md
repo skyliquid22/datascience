@@ -8,6 +8,13 @@ First clone the repository in your desired path.
 You can then install the package locally with pip
 > **pip install -e datascience**
 
+# Documentation
+To view the documentation of this project, you need to compile it from source
+
+> **sphinx_build -b html `[Project_Dir]`/docs/source `[Project_Dir]`/docs/build**
+
+The documentation will be in docs/build as an HTML file.
+
 ## License
 
 This project is licensed under an MIT licence.

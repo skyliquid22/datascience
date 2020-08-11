@@ -2,7 +2,7 @@
 Data Science Lib
 ================
 
-Data Science Lib is a python package containing a sample of my past work in Quantative Financial Analysis.
+Data Science Lib is a python package containing a sample of my past work in Quantitative Financial Analysis.
 
 Installation
 ************
